@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"><!-- Подключение стилей -->
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <nav>
+                <ul>
+                    <li><a href="{% url 'index' %}">Главная</a></li>
+                    <li><a href="{% url 'projects' %}">Проекты</a></li>
+                    <li><a href="{% url 'components' %}">Компоненты</a></li>
+                    <li><a href="{% url 'personal' %}">Личный кабинет</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Мой Сайт</p>
+    </footer>
+</body>
+</html>
+</html>

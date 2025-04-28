@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +85,8 @@ DATABASES = {
         'PORT': '5432',              # Стандартный порт PostgreSQL
     }
 }
+LOGIN_REDIRECT_URL  =  "/"
+LOGOUT_REDIRECT_URL = "/"
 
 
 # Password validation
