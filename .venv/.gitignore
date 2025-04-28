@@ -9,6 +9,5 @@ env/
 
 # Файлы базы данных (не нужно для PostgreSQL, но все равно включите для других баз данных)
 *.sqlite3
-__pycache__/
-*.pyc
+../accounts/__pycache__/*.pyc
 
