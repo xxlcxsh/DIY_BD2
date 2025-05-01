@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load form_tags %}
 
 {% block title %}Регистрация{% endblock %}
 
@@ -12,30 +13,63 @@
     <form method="post" action="{% url 'signup' %}" class="registration-form">
         {% csrf_token %}
 
+        <!-- Поле логина -->
         <div class="form-group">
             <label for="{{ form.username.id_for_label }}">Логин:</label>
-            {{ form.username }}
+            {{ form.username|add_class:"form-control" }}  <!-- Применяем класс -->
             {{ form.username.errors }}
         </div>
 
+        <!-- Поле email -->
         <div class="form-group">
             <label for="{{ form.email.id_for_label }}">Email:</label>
-            {{ form.email }}
+            {{ form.email|add_class:"form-control" }}  <!-- Применяем класс -->
             {{ form.email.errors }}
         </div>
 
+        <!-- Поле пароля -->
         <div class="form-group">
             <label for="{{ form.password1.id_for_label }}">Пароль:</label>
-            {{ form.password1 }}
+            {{ form.password1|add_class:"form-control" }}  <!-- Применяем класс -->
             {{ form.password1.errors }}
         </div>
 
+        <!-- Поле подтверждения пароля -->
         <div class="form-group">
             <label for="{{ form.password2.id_for_label }}">Подтверждение пароля:</label>
-            {{ form.password2 }}
+            {{ form.password2|add_class:"form-control" }}  <!-- Применяем класс -->
             {{ form.password2.errors }}
         </div>
 
+        <!-- Поле имени -->
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">Имя:</label>
+            {{ form.first_name|add_class:"form-control" }}  <!-- Применяем класс -->
+            {{ form.first_name.errors }}
+        </div>
+
+        <!-- Поле фамилии -->
+        <div class="form-group">
+            <label for="{{ form.second_name.id_for_label }}">Фамилия:</label>
+            {{ form.second_name|add_class:"form-control" }}  <!-- Применяем класс -->
+            {{ form.second_name.errors }}
+        </div>
+
+        <!-- Поле возраста -->
+        <div class="form-group">
+            <label for="{{ form.age.id_for_label }}">Возраст:</label>
+            {{ form.age|add_class:"form-control" }}  <!-- Применяем класс -->
+            {{ form.age.errors }}
+        </div>
+
+        <!-- Поле пола -->
+        <div class="form-group">
+            <label for="{{ form.sex.id_for_label }}">Пол:</label>
+            {{ form.sex|add_class:"form-control" }}  <!-- Применяем класс -->
+            {{ form.sex.errors }}
+        </div>
+
+        <!-- Кнопка регистрации -->
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
         </div>
@@ -67,23 +101,10 @@
         margin-bottom: 15px;
     }
 
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        transition: border-color 0.3s;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
     .btn {
         width: 100%;
         padding: 10px;
+
         background-color: #007bff;
         color: white;
         border: none;

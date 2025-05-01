@@ -1,16 +1,13 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,AbstractUser
 from django.db import models
-class User_level(models.Model):
-    name = models.CharField(max_length=50)
-    def __str__(self):
-        return self.name
-class Users(models.Model):
-    name = models.CharField(max_length=50)
-    sex = models.CharField(max_length=1)
+class Users(AbstractUser):
+    username = models.CharField(max_length=50,unique=True)
+    password=models.CharField(max_length=128)
+    sex = models.CharField(max_length=6)
     age = models.IntegerField()
-    level_id=models.ForeignKey(User_level,on_delete=models.CASCADE)
+    level_id=models.IntegerField(default=0)#0-бесплатная, 1 - платная
     def __str__(self):
-        return self.name
+        return self.first_name+" "+self.last_name
 class projects(models.Model):
     user_id=models.ForeignKey(Users, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)

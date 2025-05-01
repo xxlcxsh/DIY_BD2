@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load form_tags %}
 
 {% block title %}Авторизация{% endblock %}
 
@@ -17,19 +18,15 @@
         {{ form.non_field_errors }}
 
         <div class="form-group">
-            <div class="form-control">
-                <label for="{{ form.username.id_for_label }}">Логин:</label>
-                {{ form.username }}
-                {{ form.username.errors }}
-            </div>
+            <label for="{{ form.username.id_for_label }}">Логин:</label>
+            {{ form.username|add_class:"form-control" }}  <!-- Применяем класс -->
+            {{ form.username.errors }}
         </div>
 
         <div class="form-group">
             <label for="{{ form.password.id_for_label }}">Пароль:</label>
-            <div class="form-control">
-                {{ form.password }}
-                {{ form.password.errors }}
-            </div>
+            {{ form.password|add_class:"form-control" }}  <!-- Применяем класс -->
+            {{ form.password.errors }}
         </div>
 
         <div class="form-group">
@@ -41,4 +38,70 @@
         </div>
     </form>
 </div>
+
+<style>
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .form-footer {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .form-footer a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .form-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+
 {% endblock %}

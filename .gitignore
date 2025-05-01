@@ -1,8 +1,11 @@
 # Виртуальное окружение
-venv/
+.venv
 .venv/
 env/
 .env/
+.idea
+idea/
+
 
 # Логи
 *.log
