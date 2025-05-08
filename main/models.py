@@ -17,10 +17,7 @@ class projects(models.Model):
     price = models.IntegerField()
     def __str__(self):
         return self.name
-class project_components_list(models.Model):
-    project_id = models.ForeignKey(projects, on_delete=models.CASCADE)
 class components(models.Model):
-    component_id = models.ForeignKey(project_components_list, on_delete=models.CASCADE)
     user_id=models.ForeignKey(Users, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -31,5 +28,9 @@ class components(models.Model):
     status_id = models.IntegerField()
     def __str__(self):
         return self.name
+class project_components_list(models.Model):
+    project_id = models.ForeignKey(projects, on_delete=models.CASCADE)
+    component_id = models.ForeignKey(components, on_delete=models.CASCADE, null=True, blank=True)
+
 
 

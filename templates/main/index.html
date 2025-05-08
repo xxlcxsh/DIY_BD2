@@ -1,13 +1,56 @@
-{%  extends 'main/base.html' %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Главная</title>
-</head>
-<body>
-    {% block content %}
-    <h1>Главная</h1>
-    {% endblock %}
-</body>
-</html>
+{% extends "main/base.html" %}
+
+{% block title %}Главная — Учёт материалов и затрат{% endblock %}
+
+{% block top_buttons %}
+<!-- Можно сюда добавить кнопку для регистрации или входа в будущем -->
+{% endblock %}
+
+{% block content %}
+<div class="text-center my-5">
+    <h1 class="display-4">Учёт материалов и затрат для ручных работ</h1>
+    <p class="lead mt-4">Упростите контроль бюджета и управления ресурсами для ваших хобби и небольшого бизнеса.</p>
+    <a href="{% url 'projects_list' %}" class="btn btn-primary btn-lg mt-3">Мои проекты</a>
+    <a href="{% url 'components_list' %}" class="btn btn-secondary btn-lg mt-3 ms-2">Материалы и запасы</a>
+</div>
+
+<div class="container my-5">
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Отслеживание расходов</h3>
+                    <p class="card-text">Создавайте проекты, добавляйте материалы, и автоматически рассчитывайте себестоимость ваших изделий.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Управление запасами</h3>
+                    <p class="card-text">Ведите учёт материалов: сколько осталось, где покупали, и сколько стоили.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title">Простота и контроль</h3>
+                    <p class="card-text">Интуитивный интерфейс, который сделает вашу работу более организованной и эффективной.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Почему выбирают наше приложение?</h2>
+        <ul class="list-group list-group-flush fs-5">
+            <li class="list-group-item"><strong>Легко использовать</strong> — минималистичный интерфейс для быстрого начала работы.</li>
+            <li class="list-group-item"><strong>Гибко настраивать</strong> — добавляйте материалы и проекты по своим потребностям.</li>
+            <li class="list-group-item"><strong>Отслеживайте расходы</strong> — всегда в курсе бюджета и затрат на каждом этапе.</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

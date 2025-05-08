@@ -1,0 +1,34 @@
+{% extends "main/base.html" %}
+
+{% block title %}Мои проекты{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Мои проекты</h1>
+
+{% if projects %}
+    <table class="table table-striped table-bordered align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>Название проекта</th>
+            <th>Заказчик
+            <th>Дедлайн</th>
+            <th>Себестоимость (цена компонентов)</th>
+            <th>Цена продажи</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for project in projects %}
+            <tr>
+                <td><a href="{% url 'project_detail' project.id %}">{{ project.name }}</a></td>
+                <td>{{ project.customer_name }}</td>
+                <td>{{ project.due_date }}</td>
+                <td>{{ project.cost_price|default:0 }} ₽</td>
+                <td>{{ project.price_sale }} ₽</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert alert-info">Проекты отсутствуют.</div>
+{% endif %}
+{% endblock %}

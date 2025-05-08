@@ -1,33 +1,69 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}"><!-- Подключение стилей -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}DIYCounter{% endblock %}</title>
+
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        /* Основной контейнер - использует флексбокс для растягивания содержимого */
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .content-wrapper {
+            flex: 1; /* растягиваем контент до доступной высоты */
+        }
+    </style>
+
+    {% block extra_head %}
+    {% endblock %}
 </head>
 <body>
-    <div class="wrapper">
-        <header>
-            <nav>
-                <ul>
-                    <li><a href="{% url 'index' %}">Главная</a></li>
-                    <li><a href="{% url 'projects' %}">Проекты</a></li>
-                    <li><a href="{% url 'components' %}">Компоненты</a></li>
-                    <li><a href="{% url 'personal' %}">Личный кабинет</a></li>
-                </ul>
-            </nav>
-        </header>
 
-        <main>
-            {% block content %}
-            {% endblock %}
-        </main>
+<!-- Навигационная панель -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'index' %}">DIYCounter</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'projects_list' %}">Проекты</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'components_list' %}">Компоненты</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Личный кабинет</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Войти</a></li>
+        {% endif %}
+      </ul>
     </div>
+  </div>
+</nav>
 
-    <footer>
-        <p>&copy; 2025 Мой Сайт</p>
-    </footer>
+<!-- Обертка для контента, чтобы 'растягивать' его -->
+<div class="content-wrapper container">
+  {% block content %}
+  {% endblock %}
+</div>
+
+<!-- Футер -->
+<footer class="bg-light text-center text-muted py-3 mt-auto">
+  &copy; 2025 DIYCounter. Все права защищены.
+</footer>
+
+<!-- Bootstrap JS + Popper (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block extra_scripts %}
+{% endblock %}
 </body>
-</html>
 </html>

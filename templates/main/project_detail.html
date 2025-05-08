@@ -1,0 +1,31 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<h1>{{ project.name }}</h1>
+
+<p><strong>Описание:</strong> {{ project.description }}</p>
+<p><strong>Срок:</strong> {{ project.due_date }}</p>
+<p><strong>Заказчик:</strong> {{ project.customer_name }}</p>
+<p><strong>Цена:</strong> {{ project.price }}</p>
+
+<h2>Компоненты проекта:</h2>
+{% if project.project_components.all %}
+<ul>
+    {% for rel in project.project_components.all %}
+    <li>
+        {{ rel.component.name }} — 
+        Кол-во: {{ rel.component.left_amount }} {{ rel.component.unit_type }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Компоненты не добавлены</p>
+{% endif %}
+
+<div style="margin-top: 20px;">
+    <a href="{% url 'project_edit' project.pk %}" class="btn btn-warning">Изменить</a>
+    <a href="{% url 'project_delete' project.pk %}" class="btn btn-danger">Удалить</a>
+</div>
+
+<a href="{% url 'projects_list' %}" style="display: block; margin-top: 30px;">Вернуться к списку проектов</a>
+{% endblock %}

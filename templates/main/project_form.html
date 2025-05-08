@@ -1,0 +1,18 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 0 auto;">
+
+<h1 class="mb-4">{{ title }}</h1>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a href="{% url 'projects_list' %}" class="btn btn-secondary">Отмена</a>
+    </div>
+</form>
+
+</div>
+{% endblock %}

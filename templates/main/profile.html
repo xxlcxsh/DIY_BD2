@@ -1,0 +1,49 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="mb-4">Личный кабинет</h2>
+
+    <section class="mb-4">
+        <h3>Информация о пользователе</h3>
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Имя пользователя:</strong> {{ user.username }}</li>
+            <li class="list-group-item"><strong>Фамилия:</strong> {{ user.last_name }}</li>
+            <li class="list-group-item"><strong>Имя:</strong> {{ user.first_name }}</li>
+            <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+        </ul>
+    </section>
+
+    <section class="mb-4">
+        <h3>Статистика</h3>
+        <ul class="list-group">
+            <li class="list-group-item">Создано проектов: {{ projects_count }}</li>
+            <li class="list-group-item">Создано компонентов: {{ components_count }}</li>
+        </ul>
+    </section>
+
+    <section class="mb-4">
+        <h3>Редактировать профиль</h3>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
+        </form>
+    </section>
+
+    <hr>
+
+    <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Выйти</a>
+</div>
+{% endblock %}
