@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 
 from main import views
+from main.views import purchase_subscription, subscription_success
 
 urlpatterns = [path("",views.index,name="index"),
                path('projects/', views.projects_list, name='projects_list'),
@@ -14,4 +15,7 @@ urlpatterns = [path("",views.index,name="index"),
                path('components/<int:pk>/edit/', views.component_edit, name='component_edit'),
                path('components/<int:pk>/delete/', views.component_delete, name='component_delete'),
                path("profile/",views.profile,name="profile"),
+               path('subscription/', purchase_subscription, name='purchase_subscription'),
+               path('subscription/', subscription_success, name='purchase_subscription'),
+
 ]

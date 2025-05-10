@@ -1,5 +1,6 @@
-from django import forms
 from django.contrib.auth.models import User
+from django import forms
+from .models import projects, components, project_components_list
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
@@ -14,19 +15,26 @@ class ComponentForm(forms.ModelForm):
         model = components
         fields = ['name', 'description', 'left_amount', 'unit_type', 'price_per_unit', 'url', 'status_id']
 class ProjectForm(forms.ModelForm):
-    # Добавляем поле для выбора компонентов - множественный выбор
     components = forms.ModelMultipleChoiceField(
-        queryset=components.objects.none(),  # изначально пусто, заполнится в __init__
+        queryset=components.objects.none(),
         required=False,
-        widget=forms.CheckboxSelectMultiple  # можно поменять на SelectMultiple или другое
+        widget=forms.CheckboxSelectMultiple
+    )
+
+    component_amounts = forms.CharField(
+        required=False,
+        help_text="Введите количество для каждого выбранного компонента через запятую",
+        widget=forms.TextInput(attrs={'placeholder': '1, 2, 3,...'})
     )
 
     class Meta:
         model = projects
-        fields = ['name', 'description', 'due_date', 'customer_name', 'price']
+        fields = ['name', 'description', 'due_date', 'customer_name', 'price', 'amount', 'components']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
             self.fields['components'].queryset = components.objects.filter(user_id=user)
+
+

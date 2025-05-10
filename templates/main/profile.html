@@ -6,6 +6,12 @@
 <div class="container" style="max-width: 600px; margin: 0 auto;">
     <h2 class="mb-4">Личный кабинет</h2>
 
+    <div class="text-end mb-3">
+        {% if user.level_id == 0 %}
+            <a href="{% url 'purchase_subscription' %}" class="btn btn-success">Купить подписку</a>
+        {% endif %}
+    </div>
+
     <section class="mb-4">
         <h3>Информация о пользователе</h3>
         <ul class="list-group">
@@ -13,6 +19,15 @@
             <li class="list-group-item"><strong>Фамилия:</strong> {{ user.last_name }}</li>
             <li class="list-group-item"><strong>Имя:</strong> {{ user.first_name }}</li>
             <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+            <li class="list-group-item"><strong>Уровень подписки:</strong>
+                {% if user.level_id == 0 %}
+                    Базовый план
+                {% elif user.level_id == 1 %}
+                    Премиум план
+                {% else %}
+                    Нет подписки
+                {% endif %}
+            </li>
         </ul>
     </section>
 
@@ -44,6 +59,6 @@
 
     <hr>
 
-    <a href="{% url 'logout' %}" class="btn btn-outline-secondary">Выйти</a>
+    <a href="{% url 'custom_logout' %}" class="btn btn-outline-secondary">Выйти</a>
 </div>
 {% endblock %}

@@ -16,6 +16,7 @@
                     <h5 class="card-title">{{ component.name }}</h5>
                     <p class="card-text mb-2"><strong>Цена за шт:</strong> {{ component.price_per_unit }} ₽</p>
                     <p class="card-text"><strong>Количество в наличии:</strong> {{ component.left_amount }} {{ component.unit_type }}</p>
+                    <p class="card-text"><strong>Остаток компонентов:</strong> {{ component.remaining_amount }} {{ component.unit_type }}</p>
                 </div>
                 <div class="mt-3 d-flex justify-content-end gap-2">
                     <a href="{% url 'component_edit' component.pk %}" class="btn btn-sm btn-warning">Изменить</a>

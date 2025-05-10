@@ -9,18 +9,20 @@
 <p><strong>Цена:</strong> {{ project.price }}</p>
 
 <h2>Компоненты проекта:</h2>
-{% if project.project_components.all %}
+{% if project.project_components_list_set.exists %}
 <ul>
-    {% for rel in project.project_components.all %}
-    <li>
-        {{ rel.component.name }} — 
-        Кол-во: {{ rel.component.left_amount }} {{ rel.component.unit_type }}
-    </li>
+    {% for rel in project.project_components_list_set.all %}
+        <li>
+            {{ rel.component_id.name }} —
+            Кол-во: {{ rel.component_id.left_amount }} {{ rel.component_id.unit_type }}
+        </li>
     {% endfor %}
 </ul>
 {% else %}
-<p>Компоненты не добавлены</p>
+    <p>Компоненты не добавлены</p>
 {% endif %}
+
+
 
 <div style="margin-top: 20px;">
     <a href="{% url 'project_edit' project.pk %}" class="btn btn-warning">Изменить</a>

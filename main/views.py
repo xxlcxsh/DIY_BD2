@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -37,6 +38,9 @@ def projects_list(request):
             'customer_name': p.customer_name,
             'cost_price': cost,
             'price_sale': p.price,
+            'amount': p.amount,
+            'profit': p.amount * p.price,
+            'due_date': p.due_date,
         })
 
     return render(request, 'main/projects_list.html', {'projects': projects_with_cost})
@@ -44,56 +48,68 @@ def projects_list(request):
 
 @login_required
 def project_create(request):
+    if not projects.can_add_projects(request.user):
+        return redirect('purchase_subscription')
     if request.method == 'POST':
         form = ProjectForm(request.POST, user=request.user)
         if form.is_valid():
-            new_project = form.save(commit=False)
-            new_project.user_id = request.user
-            new_project.save()
+            new_project_count = form.cleaned_data['amount']  # Получаем количество проектов
+            for _ in range(new_project_count):  # Создаем нужное количество проектов
+                new_project = form.save(commit=False)
+                new_project.user_id = request.user
+                new_project.save()
 
-            # Сохраняем связанные компоненты
-            selected_components = form.cleaned_data['components']
-            # Очистим старые связи, если есть (при создании их не должно быть)
-            project_components_list.objects.filter(project_id=new_project).delete()
-            for comp in selected_components:
-                project_components_list.objects.create(project_id=new_project, component_id=comp)
-            return redirect('project_detail', pk=new_project.pk)
+                # Сохраняем связанные компоненты
+                selected_components = form.cleaned_data['components']
+                component_amounts = form.cleaned_data['component_amounts'].split(',')
+
+                project_components_list.objects.filter(project_id=new_project).delete()
+
+                for comp, amount in zip(selected_components, component_amounts):
+                    amount = amount.strip()
+                    if amount.isdigit():
+                        project_components_list.objects.create(project_id=new_project, component_id=comp, amount=int(amount))
+
+            return redirect('projects_list')  # Перенаправляем на список проектов или другой экшн
     else:
-        form = ProjectForm(user=request.user)  # при GET или другом методе создаём пустую форму
+        form = ProjectForm(user=request.user)
 
-    # Возвращаем страницу с формой (и ошибками, если есть)
     return render(request, 'main/project_form.html', {'form': form, 'title': 'Добавить проект'})
 
-@login_required
+
+
 def project_edit(request, pk):
     project = get_object_or_404(projects, pk=pk, user_id=request.user.id)
+
     if request.method == 'POST':
-        form = ProjectForm(request.POST, instance=project)
+        form = ProjectForm(request.POST, user=request.user, instance=project)  # Передаем пользователя
         if form.is_valid():
             form.save()
 
-            selected_components = form.cleaned_data['components']
+            selected_components = form.cleaned_data.get('components', [])
             # Удалим все старые связи
             project_components_list.objects.filter(project_id=project).delete()
             for comp in selected_components:
                 project_components_list.objects.create(project_id=project, component_id=comp)
 
             return redirect('project_detail', pk=project.pk)
+
     else:
-        # Получим компоненты, связанные с проектом
-        linked_components_ids = project_components_list.objects.filter(
-            project_id=project
-        ).values_list('component_id', flat=True)
+        # Получаем компоненты, связанные с проектом
+        linked_components = project_components_list.objects.filter(project_id=project).values_list('component_id', flat=True)
+        initial_components = components.objects.filter(id__in=linked_components)
 
-        initial_components = components.objects.filter(id__in=linked_components_ids)
+        form = ProjectForm(user=request.user, instance=project)  # Передаем пользователя
 
-        form = ProjectForm(instance=project)
-        # Предварительно передать компоненты в форму, если нужно
-        # (зависит, как ты реализовал поле components в форме)
-        # Например:
-        # form.fields['components'].initial = list(linked_components_ids)
+        # Предварительно передаем выбранные компоненты в форму
+        form.fields['components'].initial = initial_components
 
-    return render(request, 'main/project_form.html', {'form': form, 'title': 'Редактировать проект'})
+    return render(request, 'main/project_form.html', {
+        'form': form,
+        'title': 'Редактировать проект',
+        'project': project
+    })
+
 
 @login_required
 def project_detail(request, pk):
@@ -112,10 +128,18 @@ def project_delete(request, pk):
 def components_list(request):
     user = request.user
     user_components = components.objects.filter(user_id=user.id)
+
+    # Создаем словарь для отображения остатков
+    for component in user_components:
+        component.remaining_amount = component.remaining_amount()  # Добавляем оставшееся количество
+
     return render(request, 'main/components_list.html', {'components': user_components})
+
 
 @login_required
 def component_create(request):
+    if not components.can_add_components(request.user):
+        return redirect('purchase_subscription')
     if request.method == 'POST':
         form = ComponentForm(request.POST)
         if form.is_valid():
@@ -170,5 +194,27 @@ def profile(request):
         'user': user,
     }
     return render(request, 'main/profile.html', context)
+@login_required
+def custom_logout(request):
+    logout(request)  # Это вызовет выход из учетной записи
+    return redirect('/')
+@login_required
+def purchase_subscription(request):
+    # Логика покупки подписки
+    if request.method == 'POST':
+        # Обработка оплаты (если необходимо)
+        user = request.user
+        user.level_id = 1  # Установим платный уровень
+        user.save()
+
+        return redirect('subscription_success')  # Перенаправление на страницу подтверждения
+
+    return render(request, 'main/purchase_subscription.html', {'title': 'Купить подписку'})
+# views.py
+@login_required
+def subscription_success(request):
+    return render(request, 'main/subscription_success.html', {'title': 'Успех подписки'})
+
+
 
 

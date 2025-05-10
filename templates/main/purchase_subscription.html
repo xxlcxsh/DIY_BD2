@@ -1,0 +1,36 @@
+{% extends "main/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">{{ title }}</h1>
+
+    <p>Для добавления более 5 проектов или более 20 компонентов вам нужно приобрести платную подписку.</p>
+
+    <div class="mb-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Премиум подписка</h5>
+                <p class="card-text">Стоимость: 199₽ в месяц</p>
+                <ul>
+                    <li>Добавьте неограниченное количество проектов</li>
+                    <li>Добавьте неограниченное количество компонентов</li>
+                </ul>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="subscription_type" value="premium">
+                    <button type="submit" class="btn btn-primary">Купить Премиум подписку</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h3>Почему стоит обновить подписку?</h3>
+        <ul>
+            <li>Неограниченные проекты и компоненты</li>
+            <li>Поддержка и обновления</li>
+        </ul>
+    </div>
+
+</div>
+{% endblock %}
