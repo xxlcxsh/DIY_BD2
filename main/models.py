@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User,AbstractUser
 from django.db import models
+
+
 class Users(AbstractUser):
     username = models.CharField(max_length=50,unique=True)
     password=models.CharField(max_length=128)
@@ -8,6 +10,8 @@ class Users(AbstractUser):
     level_id=models.IntegerField(default=0)#0-бесплатная, 1 - платная
     def __str__(self):
         return self.first_name+" "+self.last_name
+    
+
 class projects(models.Model):
     user_id=models.ForeignKey(Users, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
@@ -36,6 +40,8 @@ class projects(models.Model):
             return True
         # Проверка для бесплатной версии
         return projects.objects.filter(user=user).count() < 5
+    
+
 class components(models.Model):
     user_id=models.ForeignKey(Users, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
@@ -59,10 +65,9 @@ class components(models.Model):
             return True
         # Проверка для бесплатной версии
         return components.objects.filter(user=user).count() < 20
+    
+
 class project_components_list(models.Model):
     project_id = models.ForeignKey(projects, on_delete=models.CASCADE)
     component_id = models.ForeignKey(components, on_delete=models.CASCADE, null=True, blank=True)
     amount = models.IntegerField(default=1)
-
-
-

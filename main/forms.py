@@ -9,10 +9,22 @@ class UserProfileForm(forms.ModelForm):
 
 
 class ComponentForm(forms.ModelForm):
+    left_amount = forms.IntegerField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label="Остаток"
+    )
+
+    price_per_unit = forms.IntegerField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label="Остаток"
+    )
+
     class Meta:
         model = components
         fields = ['name', 'description', 'left_amount', 'unit_type', 'price_per_unit', 'url', 'status_id']
-
+        
 
 class ProjectForm(forms.ModelForm):
     due_date = forms.DateField(
