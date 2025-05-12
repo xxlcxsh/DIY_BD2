@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'diy_db',         # Имя вашей БД
         'USER': 'projuser',     # Пользователь
-        'PASSWORD': 'mypassword',    # Пароль
+        'PASSWORD': '453791',    # Пароль
         'HOST': 'localhost',         # Обычно 'localhost' или '127.0.0.1'
         'PORT': '5432',              # Стандартный порт PostgreSQL
     }
