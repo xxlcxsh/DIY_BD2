@@ -17,7 +17,12 @@
                     <p class="card-text mb-2"><strong>Цена за единицу:</strong> {{ component.price_per_unit }} ₽</p>
                     
                     <p class="card-text"><strong>Количество в наличии:</strong> {{ component.left_amount }} {{ component.unit_type }}</p>
-                    <p class="card-text"><strong>Незадействованно в проектах:</strong> {{ component.remaining_amount }} {{ component.unit_type }}</p>
+                    <p class="card-text">
+                        <strong>Незадействованно в проектах:</strong> {{ component.remaining_amount }} {{ component.unit_type }}
+                        {% if component.remaining_amount < 0 %}
+                            <span class="text-danger">(нехватка компонента!)</span>
+                        {% endif %}
+                    </p>
                 </div>
                 <div class="mt-3 d-flex justify-content-end gap-2">
                     <a href="{% url 'component_edit' component.pk %}" class="btn btn-sm btn-warning">Изменить</a>
