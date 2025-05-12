@@ -18,9 +18,10 @@ class projects(models.Model):
     description = models.TextField()
     due_date = models.DateField()
     customer_name = models.CharField(max_length=100)
-    price = models.IntegerField()
+    price = models.IntegerField(null=True, blank=True)  # Изменено: теперь может быть null
     amount = models.IntegerField(null=False,default=1)
     completed = models.BooleanField(default=False)  # Флаг завершения проекта
+    for_sale = models.BooleanField("На продажу?", default=False)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # Сначала сохраняем сам проект

@@ -7,6 +7,14 @@
 <p><strong>Срок:</strong> {{ project.due_date }}</p>
 <p><strong>Заказчик:</strong> {{ project.customer_name }}</p>
 <p><strong>Цена:</strong> {{ project.price }}</p>
+<p><strong>Количество:</strong> {{ project.amount }}</p>
+<p><strong>На продажу:</strong>
+    {% if project.for_sale %}
+        Да
+    {% else %}
+        Нет
+    {% endif %}
+</p>
 
 <h2>Компоненты проекта:</h2>
 {% if project.project_components_list_set.exists %}

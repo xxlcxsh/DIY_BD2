@@ -32,7 +32,27 @@ class ProjectForm(forms.ModelForm):
         input_formats=['%d.%m.%y'],
         label="Дедлайн"
     )
-        
+
+    customer_name = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Имя заказчика'}),
+        label="Имя заказчика"
+    )
+
+    price = forms.IntegerField(
+        min_value=0,
+        required=False,
+        widget=forms.NumberInput(attrs={'placeholder': 'Цена'}),
+        label="Цена"
+    )
+
+    amount = forms.IntegerField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'placeholder': 'Количество'}),
+        label="Количество"
+    )
+
     components = forms.ModelMultipleChoiceField(
         queryset=components.objects.none(),
         required=False,
@@ -45,9 +65,15 @@ class ProjectForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': '1, 2, 3,...'})
     )
 
+    for_sale = forms.BooleanField(
+        required=False,
+        label="На продажу?",
+        widget=forms.CheckboxInput()
+    )
+
     class Meta:
         model = projects
-        fields = ['name', 'description', 'due_date', 'customer_name', 'price', 'amount', 'components']
+        fields = ['name', 'description', 'due_date', 'customer_name', 'price', 'amount', 'components', 'for_sale']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

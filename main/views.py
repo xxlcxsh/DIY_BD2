@@ -36,11 +36,12 @@ def projects_list(request):
             'id': p.id,
             'name': p.name,
             'customer_name': p.customer_name,
-            'cost_price': cost,
-            'price_sale': p.price,
+            'cost': cost,
+            'price': p.price,
             'amount': p.amount,
-            'profit': p.amount * p.price,
+            'profit': p.amount * p.price if p.price is not None else 0,
             'due_date': p.due_date,
+            'for_sale': p.for_sale,
         })
 
     return render(request, 'main/projects_list.html', {'projects': projects_with_cost})
