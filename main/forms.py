@@ -6,15 +6,21 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-from django import forms
-from .models import components, projects
 
 
 class ComponentForm(forms.ModelForm):
     class Meta:
         model = components
         fields = ['name', 'description', 'left_amount', 'unit_type', 'price_per_unit', 'url', 'status_id']
+
+
 class ProjectForm(forms.ModelForm):
+    due_date = forms.DateField(
+        widget=forms.DateInput(format='%d.%m.%y', attrs={'placeholder': 'ДД.ММ.ГГ'}),
+        input_formats=['%d.%m.%y'],
+        label="Дедлайн"
+    )
+        
     components = forms.ModelMultipleChoiceField(
         queryset=components.objects.none(),
         required=False,
