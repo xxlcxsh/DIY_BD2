@@ -6,15 +6,53 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
-from django import forms
-from .models import components, projects
 
 
 class ComponentForm(forms.ModelForm):
+    left_amount = forms.IntegerField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label="Остаток"
+    )
+
+    price_per_unit = forms.IntegerField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}),
+        label="Остаток"
+    )
+
     class Meta:
         model = components
         fields = ['name', 'description', 'left_amount', 'unit_type', 'price_per_unit', 'url', 'status_id']
+        
+
 class ProjectForm(forms.ModelForm):
+    due_date = forms.DateField(
+        widget=forms.DateInput(format='%d.%m.%y', attrs={'placeholder': 'ДД.ММ.ГГ'}),
+        input_formats=['%d.%m.%y'],
+        label="Дедлайн"
+    )
+
+    customer_name = forms.CharField(
+        max_length=100,
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Имя заказчика'}),
+        label="Имя заказчика"
+    )
+
+    price = forms.IntegerField(
+        min_value=0,
+        required=False,
+        widget=forms.NumberInput(attrs={'placeholder': 'Цена'}),
+        label="Цена"
+    )
+
+    amount = forms.IntegerField(
+        min_value=0,
+        widget=forms.NumberInput(attrs={'placeholder': 'Количество'}),
+        label="Количество"
+    )
+
     components = forms.ModelMultipleChoiceField(
         queryset=components.objects.none(),
         required=False,
@@ -27,9 +65,15 @@ class ProjectForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'placeholder': '1, 2, 3,...'})
     )
 
+    for_sale = forms.BooleanField(
+        required=False,
+        label="На продажу?",
+        widget=forms.CheckboxInput()
+    )
+
     class Meta:
         model = projects
-        fields = ['name', 'description', 'due_date', 'customer_name', 'price', 'amount', 'components']
+        fields = ['name', 'description', 'due_date', 'customer_name', 'price', 'amount', 'components', 'for_sale']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

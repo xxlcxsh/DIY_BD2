@@ -14,4 +14,3 @@ idea/
 *.sqlite3
 accounts/__pycache__/*.pyc
 
-/main/migrations/

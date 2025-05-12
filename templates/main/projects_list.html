@@ -12,25 +12,64 @@
         <thead class="table-light">
         <tr>
             <th>Название проекта</th>
-            <th>Заказчик
             <th>Дедлайн</th>
+            <th>Количество</th>
+            <th>На продажу?</th>
             <th>Себестоимость (цена компонентов)</th>
             <th>Цена продажи</th>
-            <th>Количество</th>
             <th>Итоговая выручка</th>
+            <th>Заказчик</th>
         </tr>
         </thead>
         <tbody>
         {% for project in projects %}
             <tr>
                 <td><a href="{% url 'project_detail' project.id %}">{{ project.name }}</a></td>
-                <td>{{ project.customer_name }}</td>
                 <td>{{ project.due_date }}</td>
-                <td>{{ project.cost_price|default:0 }} ₽</td>
-                <td>{{ project.price_sale }} ₽</td>
                 <td>{{ project.amount }}</td>
-                <td>{{ project.profit }} ₽</td>
+
+                <td>
+                    {% if project.for_sale %}
+                        <span class="text-success">Да</span>
+                    {% else %}
+                        <span class="text-danger">Нет</span>
+                    {% endif %}
+                </td>
+
+
+                <td>
+                    {% if project.cost %}
+                        {{ project.cost }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if project.for_sale %}
+                        {{ project.price }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if project.for_sale %}
+                        {{ project.profit }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if project.customer_name %}
+                        {{ project.customer_name }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
             </tr>
+            
         {% endfor %}
         </tbody>
     </table>

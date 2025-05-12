@@ -15,7 +15,7 @@
     <section class="mb-4">
         <h3>Информация о пользователе</h3>
         <ul class="list-group">
-            <li class="list-group-item"><strong>Имя пользователя:</strong> {{ user.username }}</li>
+            <li class="list-group-item"><strong>Логин:</strong> {{ user.username }}</li>
             <li class="list-group-item"><strong>Фамилия:</strong> {{ user.last_name }}</li>
             <li class="list-group-item"><strong>Имя:</strong> {{ user.first_name }}</li>
             <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
@@ -52,7 +52,18 @@
 
         <form method="post" novalidate>
             {% csrf_token %}
-            {{ form.as_p }}
+            <div class="form-group">
+                <label for="id_first_name">Имя:</label>
+                {{ form.first_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_last_name">Фамилия:</label>
+                {{ form.last_name }}
+            </div>
+            <div class="form-group">
+                <label for="id_email">Email:</label>
+                {{ form.email }}
+            </div>
             <button type="submit" class="btn btn-primary mt-3">Сохранить изменения</button>
         </form>
     </section>
