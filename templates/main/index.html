@@ -2,16 +2,28 @@
 
 {% block title %}Главная — Учёт материалов и затрат{% endblock %}
 
-{% block top_buttons %}
-<!-- Можно сюда добавить кнопку для регистрации или входа в будущем -->
-{% endblock %}
-
 {% block content %}
 <div class="text-center my-5">
     <h1 class="display-4">Учёт материалов и затрат для ручных работ</h1>
     <p class="lead mt-4">Упростите контроль бюджета и управления ресурсами для ваших хобби и небольшого бизнеса</p>
-    <a href="{% url 'projects_list' %}" class="btn btn-primary btn-lg mt-3">Мои проекты</a>
-    <a href="{% url 'components_list' %}" class="btn btn-secondary btn-lg mt-3 ms-2">Материалы и запасы</a>
+
+    {% if not user.is_authenticated %}
+        <a href="{% url 'signup' %}" class="btn btn-success btn-lg my-4">Зарегистрироваться</a>
+    {% endif %}
+</div>
+
+<!-- Новый информационный блок с привлекательным текстом -->
+<div class="bg-light py-4 text-center">
+    <h2 class="mb-3">Почему вам следует выбрать наше приложение?</h2>
+    <p class="lead">Наше приложение предлагает легкость и удобство в использовании. Вы получаете минималистичный интерфейс, который позволяет быстро начать работу и фокусироваться на своих задачах.</p>
+
+    <p class="lead">Гибкость настройки позволяет добавлять материалы и проекты в соответствии с вашими личными потребностями, а возможность отслеживания расходов держит вас в курсе бюджета и затрат на каждом этапе.</p>
+</div>
+
+<!-- Кнопки перемещены ниже -->
+<div class="text-center mt-4">
+    <a href="{% url 'projects_list' %}" class="btn btn-primary btn-lg mt-3">Проекты</a>
+    <a href="{% url 'components_list' %}" class="btn btn-primary btn-lg mt-3 ms-2">Компоненты</a>
 </div>
 
 <div class="container my-5">
@@ -40,17 +52,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<div class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Почему выбирают наше приложение?</h2>
-        <ul class="list-group list-group-flush fs-5">
-            <li class="list-group-item"><strong>Легко использовать</strong> — минималистичный интерфейс для быстрого начала работы.</li>
-            <li class="list-group-item"><strong>Гибко настраивать</strong> — добавляйте материалы и проекты по своим потребностям.</li>
-            <li class="list-group-item"><strong>Отслеживайте расходы</strong> — всегда в курсе бюджета и затрат на каждом этапе.</li>
-        </ul>
     </div>
 </div>
 {% endblock %}
