@@ -22,7 +22,7 @@
     {% for rel in project.project_components_list_set.all %}
         <li>
             {{ rel.component_id.name }} —
-            Кол-во: {{ rel.component_id.left_amount }} {{ rel.component_id.unit_type }}
+            Кол-во: {{ rel.component_id.amount }} {{ rel.component_id.unit_type }}
         </li>
     {% endfor %}
 </ul>
