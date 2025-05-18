@@ -40,7 +40,7 @@ class projects(models.Model):
         if user.level_id == 1:  # Если платная подписка
             return True
         # Проверка для бесплатной версии
-        return projects.objects.filter(user_id=user.id).count() < 5
+        return projects.objects.filter(user=user).count() < 5
     
 
 class components(models.Model):
@@ -65,7 +65,7 @@ class components(models.Model):
         if user.level_id == 1:  # Если платная подписка
             return True
         # Проверка для бесплатной версии
-        return components.objects.filter(user_id=user.id).count() < 20
+        return components.objects.filter(user=user).count() < 20
     
 
 class project_components_list(models.Model):
