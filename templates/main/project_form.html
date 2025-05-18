@@ -4,9 +4,19 @@
 {% block content %}
 <div class="container">
     <h1 class="mb-4">{{ title }}</h1>
-    <form method="post" novalidate>
+
+    {% if messages %}
+    <div class="mb-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" novalidate id="project-form">
         {% csrf_token %}
 
+        <!-- Основные поля проекта -->
         <div class="mb-3">
             <label for="{{ form.name.id_for_label }}" class="form-label">Название проекта:</label>
             {{ form.name|add_class:"form-control" }}
@@ -25,9 +35,18 @@
 
         <div class="mb-3">
             <label for="{{ form.due_date.id_for_label }}" class="form-label">Дедлайн:</label>
-            {{ form.due_date|add_class:"form-control" }}
+            {{ form.due_date }}
             {% if form.due_date.errors %}
                 <div class="text-danger">{{ form.due_date.errors }}</div>
+            {% endif %}
+            <small class="form-text text-muted">Используйте календарь или введите дату в формате ДД-ММ-ГГГГ</small>
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.amount.id_for_label }}" class="form-label">Количество:</label>
+            {{ form.amount|add_class:"form-control" }}
+            {% if form.amount.errors %}
+                <div class="text-danger">{{ form.amount.errors }}</div>
             {% endif %}
         </div>
 
@@ -55,54 +74,129 @@
             {% endif %}
         </div>
 
-        <div class="mb-3">
-            <label for="{{ form.amount.id_for_label }}" class="form-label">Количество</label>
-            {{ form.amount|add_class:"form-control" }}
-            {% if form.amount.errors %}
-                <div class="text-danger">{{ form.amount.errors }}</div>
-            {% endif %}
-        </div>
-
+        <!-- Блок компонентов -->
         <div class="mb-3">
             <label class="form-label">Компоненты:</label>
-            {{ form.components }}
-            {% if form.components.errors %}
-                <div class="text-danger">{{ form.components.errors }}</div>
+            <div id="selected-components" class="mb-2">
+                <!-- Здесь будут отображаться выбранные компоненты -->
+            </div>
+
+            <div class="row g-2">
+                <div class="col-md-6">
+                    {{ form.component_choice|add_class:"form-control" }}
+                </div>
+                <div class="col-md-4">
+                    <input type="number" min="1" value="1" class="form-control" id="component-amount">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="add-component" class="btn btn-primary">Добавить</button>
+                </div>
+            </div>
+
+            {{ form.components_data }}  <!-- Скрытое поле для данных -->
+
+            <div class="form-text">Выберите компоненты для проекта</div>
+            {% if form.components_data.errors %}
+                <div class="text-danger">{{ form.components_data.errors }}</div>
             {% endif %}
-            <div class="form-text">Выберите компоненты, которые будут использованы в проекте.</div>
         </div>
 
-        <div class="mb-3">
-            <label for="{{ form.component_amounts.id_for_label }}" class="form-label">Количество компонентов:</label>
-            {{ form.component_amounts|add_class:"form-control" }}
-            {% if form.component_amounts.errors %}
-                <div class="text-danger">{{ form.component_amounts.errors }}</div>
-            {% endif %}
-            <div class="form-text">Введите количество для каждого компонента, разделяя их запятыми.</div>
-        </div>
-
-        {% if title == 'Редактировать проект' %}
-            <button type="submit" class="btn btn-primary">Внести изменения</button>
-        {% else %}
-            <button type="submit" class="btn btn-primary">Создать проект</button>
-        {% endif %}
-
-        <script>
-        // Скрипт для управления доступностью полей "Заказчик" и "Цена"
-        document.addEventListener('DOMContentLoaded', function() {
-            const forSale = document.getElementById('{{ form.for_sale.id_for_label }}');
-            const customerInput = document.querySelector('#customer_field input, #customer_field select, #customer_field textarea');
-            const priceInput = document.querySelector('#price_field input, #price_field select, #price_field textarea');
-            function toggleFields() {
-                const enabled = forSale.checked;
-                if(customerInput) customerInput.disabled = !enabled;
-                if(priceInput) priceInput.disabled = !enabled;
-            }
-            toggleFields();
-            forSale.addEventListener('change', toggleFields);
-        });
-        </script>
-
+        <button type="submit" class="btn btn-primary">
+            {% if title == 'Редактировать проект' %}Сохранить{% else %}Создать проект{% endif %}
+        </button>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const componentSelect = document.getElementById('id_component_choice');
+    const addButton = document.getElementById('add-component');
+    const selectedComponentsDiv = document.getElementById('selected-components');
+    const hiddenComponentsField = document.getElementById('id_components_data');
+    const amountInput = document.getElementById('component-amount');
+
+    // Массив для хранения выбранных компонентов
+    let selectedComponents = [];
+
+    // Загрузка ранее выбранных компонентов (при редактировании)
+    if (hiddenComponentsField && hiddenComponentsField.value) {
+        try {
+            selectedComponents = JSON.parse(hiddenComponentsField.value);
+            updateSelectedComponents();
+        } catch (e) {
+            console.error("Error parsing components:", e);
+        }
+    }
+
+    // Функция обновления отображения выбранных компонентов
+    function updateSelectedComponents() {
+        selectedComponentsDiv.innerHTML = '';
+        hiddenComponentsField.value = JSON.stringify(selectedComponents);
+
+        selectedComponents.forEach((comp, index) => {
+            const compDiv = document.createElement('div');
+            compDiv.className = 'd-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded';
+            compDiv.innerHTML = `
+                <span>${comp.name} (${comp.amount} шт.)</span>
+                <button type="button" class="btn btn-sm btn-danger remove-component" data-index="${index}">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+            `;
+            selectedComponentsDiv.appendChild(compDiv);
+        });
+
+        // Добавляем обработчики для всех кнопок удаления
+        document.querySelectorAll('.remove-component').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                selectedComponents.splice(index, 1);
+                updateSelectedComponents();
+            });
+        });
+    }
+
+    // Обработчик добавления компонента
+    addButton.addEventListener('click', function() {
+        const selectedOption = componentSelect.options[componentSelect.selectedIndex];
+        const amount = amountInput.value || 1;
+
+        if (selectedOption.value && amount > 0) {
+            selectedComponents.push({
+                id: parseInt(selectedOption.value),
+                name: selectedOption.text,
+                amount: parseInt(amount),
+                unit: selectedOption.dataset.unitType || 'шт.'
+            });
+
+            updateSelectedComponents();
+            componentSelect.selectedIndex = 0;
+            amountInput.value = 1;
+        }
+    });
+
+    // Управление видимостью полей "Заказчик" и "Цена"
+    const forSaleCheckbox = document.getElementById('{{ form.for_sale.id_for_label }}');
+    const customerField = document.getElementById('customer_field');
+    const priceField = document.getElementById('price_field');
+
+    function toggleSaleFields() {
+        const isForSale = forSaleCheckbox.checked;
+        customerField.style.display = isForSale ? 'block' : 'none';
+        priceField.style.display = isForSale ? 'block' : 'none';
+    }
+
+    // Инициализация и обработчик изменений
+    if (forSaleCheckbox && customerField && priceField) {
+        toggleSaleFields();
+        forSaleCheckbox.addEventListener('change', toggleSaleFields);
+    }
+});
+</script>
+
+<style>
+.remove-component {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+</style>
 {% endblock %}

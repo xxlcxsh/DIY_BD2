@@ -41,15 +41,6 @@
 
     <section class="mb-4">
         <h3>Редактировать профиль</h3>
-
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-success" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
         <form method="post" novalidate>
             {% csrf_token %}
             <div class="form-group">

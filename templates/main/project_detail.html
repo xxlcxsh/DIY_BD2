@@ -5,8 +5,8 @@
 
 <p><strong>Описание:</strong> {{ project.description }}</p>
 <p><strong>Срок:</strong> {{ project.due_date }}</p>
-<p><strong>Заказчик:</strong> {{ project.customer_name }}</p>
-<p><strong>Цена:</strong> {{ project.price }}</p>
+<p><strong>Заказчик:</strong> {% if project.for_sale %} {{ project.customer_name }} {% else %} - {% endif %}</p>
+<p><strong>Цена:</strong> {% if project.for_sale %} {{ project.price }} {% else %} - {% endif %}</p>
 <p><strong>Количество:</strong> {{ project.amount }}</p>
 <p><strong>На продажу:</strong>
     {% if project.for_sale %}
@@ -22,7 +22,7 @@
     {% for rel in project.project_components_list_set.all %}
         <li>
             {{ rel.component_id.name }} —
-            Кол-во: {{ rel.component_id.amount }} {{ rel.component_id.unit_type }}
+            Кол-во: {{ rel.amount }} {{ rel.component_id.unit_type }}
         </li>
     {% endfor %}
 </ul>

@@ -16,6 +16,7 @@ urlpatterns = [
     path('components/<int:pk>/edit/', views.component_edit, name='component_edit'),
     path('components/<int:pk>/delete/', views.component_delete, name='component_delete'),
     path("profile/", views.profile, name="profile"),
+    path('get_components_data/', views.get_components_data, name='get_components_data'),
     path('subscription/', views.purchase_subscription, name='purchase_subscription'),
     path('success/', views.subscription_success, name='subscription_success'),  # Исправлено имя и добавлен слеш
 ]

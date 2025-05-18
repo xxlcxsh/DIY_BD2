@@ -1,7 +1,14 @@
+import json
+
+from django import forms
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+
+from DIY_BD import settings
 from main.models import projects, components, project_components_list
 from .forms import UserProfileForm,ComponentForm,ProjectForm
 from django.db.models import Sum, F
@@ -49,69 +56,109 @@ def projects_list(request):
 
 @login_required
 def project_create(request):
+    """
+    Создание нового проекта с динамическим добавлением компонентов
+    """
+    # Проверка лимита проектов
     if not projects.can_add_projects(request.user):
+        messages.warning(request, "Для создания большего количества проектов требуется подписка")
         return redirect('purchase_subscription')
+
     if request.method == 'POST':
         form = ProjectForm(request.POST, user=request.user)
+
         if form.is_valid():
-            new_project_count = form.cleaned_data['amount']  # Получаем количество проектов
-            for _ in range(new_project_count):  # Создаем нужное количество проектов
-                new_project = form.save(commit=False)
-                new_project.user_id = request.user
-                new_project.save()
+            try:
+                with transaction.atomic():  # Транзакция для целостности данных
+                    # Сохранение проекта
+                    project = form.save(commit=False)
+                    project.user_id = request.user
+                    project.save()
 
-                # Сохраняем связанные компоненты
-                selected_components = form.cleaned_data['components']
-                component_amounts = form.cleaned_data['component_amounts'].split(',')
+                    # Обработка компонентов
+                    components_data = json.loads(form.cleaned_data['components_data'])
 
-                project_components_list.objects.filter(project_id=new_project).delete()
+                    # Проверка наличия компонентов
+                    if not components_data:
+                        raise forms.ValidationError("Не выбрано ни одного компонента")
 
-                for comp, amount in zip(selected_components, component_amounts):
-                    amount = amount.strip()
-                    if amount.isdigit():
-                        project_components_list.objects.create(project_id=new_project, component_id=comp, amount=int(amount))
+                    # Создание связей с компонентами
+                    for comp in components_data:
+                        # Проверка существования компонента
+                        if not components.objects.filter(id=comp['id'], user_id=request.user).exists():
+                            raise forms.ValidationError(f"Компонент {comp.get('name', '')} не найден")
 
-            return redirect('projects_list')  # Перенаправляем на список проектов или другой экшн
+                        project_components_list.objects.create(
+                            project_id=project,
+                            component_id_id=comp['id'],
+                            amount=comp['amount']
+                        )
+
+                    messages.success(request, "Проект успешно создан")
+                    return redirect('projects_list')
+
+            except json.JSONDecodeError:
+                messages.error(request, "Ошибка обработки данных компонентов")
+            except Exception as e:
+                messages.error(request, f"Ошибка при создании проекта: {str(e)}")
+        else:
+            messages.error(request, "Пожалуйста, исправьте ошибки в форме")
     else:
         form = ProjectForm(user=request.user)
 
-    return render(request, 'main/project_form.html', {'form': form, 'title': 'Добавить проект'})
+    context = {
+        'form': form,
+        'title': 'Создать новый проект',
+        'max_components': settings.MAX_COMPONENTS_PER_PROJECT  # Пример дополнительного параметра
+    }
 
-
-
+    return render(request, 'main/project_form.html', context)
+@login_required
 def project_edit(request, pk):
     project = get_object_or_404(projects, pk=pk, user_id=request.user.id)
 
     if request.method == 'POST':
-        form = ProjectForm(request.POST, user=request.user, instance=project)  # Передаем пользователя
+        form = ProjectForm(request.POST, user=request.user, instance=project)
         if form.is_valid():
-            form.save()
+            project = form.save()
 
-            selected_components = form.cleaned_data.get('components', [])
-            # Удалим все старые связи
+            # Обработка компонентов
+            components_data = json.loads(form.cleaned_data['components_data'])
             project_components_list.objects.filter(project_id=project).delete()
-            for comp in selected_components:
-                project_components_list.objects.create(project_id=project, component_id=comp)
 
+            for comp in components_data:
+                project_components_list.objects.create(
+                    project_id=project,
+                    component_id_id=comp['id'],
+                    amount=comp['amount']
+                )
+
+            messages.success(request, "Проект успешно обновлен")
             return redirect('project_detail', pk=project.pk)
-
     else:
-        # Получаем компоненты, связанные с проектом
-        linked_components = project_components_list.objects.filter(project_id=project).values_list('component_id', flat=True)
-        initial_components = components.objects.filter(id__in=linked_components)
+        # Загрузка связанных компонентов
+        linked_components = project_components_list.objects.filter(
+            project_id=project
+        ).select_related('component_id')
 
-        form = ProjectForm(user=request.user, instance=project)  # Передаем пользователя
+        initial_components = [
+            {
+                'id': link.component_id.id,
+                'name': link.component_id.name,
+                'amount': link.amount,
+                'unit': link.component_id.unit_type
+            }
+            for link in linked_components
+        ]
 
-        # Предварительно передаем выбранные компоненты в форму
-        form.fields['components'].initial = initial_components
+        form = ProjectForm(user=request.user, instance=project)
+        form.fields['components_data'].initial = json.dumps(initial_components)  # Исправленное имя поля
 
     return render(request, 'main/project_form.html', {
         'form': form,
         'title': 'Редактировать проект',
         'project': project
     })
-
-
 @login_required
 def project_detail(request, pk):
     project = get_object_or_404(projects, pk=pk, user_id=request.user.id)
@@ -215,6 +262,16 @@ def purchase_subscription(request):
 @login_required
 def subscription_success(request):
     return render(request, 'main/subscription_success.html', {'title': 'Успех подписки'})
+
+@login_required
+def get_components_data(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({}, status=401)
+
+    user_components = components.objects.filter(user_id=request.user).values('id', 'unit_type')
+    return JsonResponse({
+        'components': list(user_components)
+    })
 
 
 
