@@ -57,7 +57,7 @@ def project_create(request):
             new_project_count = form.cleaned_data['amount']  # Получаем количество проектов
             for _ in range(new_project_count):  # Создаем нужное количество проектов
                 new_project = form.save(commit=False)
-                new_project.user_id = request.user
+                new_project.user_id = request.user.id
                 new_project.save()
 
                 # Сохраняем связанные компоненты
@@ -145,7 +145,7 @@ def component_create(request):
         form = ComponentForm(request.POST)
         if form.is_valid():
             new_component = form.save(commit=False)
-            new_component.user_id = request.user
+            new_component.user_id = request.user.id
             new_component.save()
             return redirect('components_list')
     else:
