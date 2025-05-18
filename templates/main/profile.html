@@ -34,8 +34,8 @@
     <section class="mb-4">
         <h3>Статистика</h3>
         <ul class="list-group">
-            <li class="list-group-item">Создано проектов: {{ projects_count }}</li>
-            <li class="list-group-item">Создано компонентов: {{ components_count }}</li>
+            <li class="list-group-item">Создано проектов: <a href="{% url 'projects_list' %}" class='text-decoration-none me-3'>{{ projects_count }}</a></li>
+                <li class="list-group-item">Создано компонентов: <a href="{% url 'projects_list' %}" class='text-decoration-none me-3'>{{ components_count }}</a></li>
         </ul>
     </section>
 
