@@ -13,16 +13,8 @@
 
     <div class="mb-4">
         <p>Вы можете продолжить использовать ваш аккаунт или:</p>
-        <a href="{% url 'profile_view' %}" class="btn btn-primary">Перейти в личный кабинет</a>
-        <a href="{% url 'home' %}" class="btn btn-secondary">На главную страницу</a>  <!-- Замените 'home' на реальное имя URL для главной страницы -->
-    </div>
-
-    <div>
-        <h4>Если вы хотите отменить подписку, нажмите кнопку ниже:</h4>
-        <form method="post" action="{% url 'cancel_subscription' %}">  <!-- Замените 'cancel_subscription' на реальное имя вашего URL для отмены подписки -->
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Отменить подписку</button>
-        </form>
+        <a href="{% url 'profile' %}" class="btn btn-primary">Перейти в личный кабинет</a>
+        <a href="{% url 'index' %}" class="btn btn-secondary">На главную страницу</a>  <!-- Замените 'home' на реальное имя URL для главной страницы -->
     </div>
 </div>
 {% endblock %}
