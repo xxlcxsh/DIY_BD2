@@ -26,7 +26,7 @@ class ComponentForm(forms.ModelForm):
 
     class Meta:
         model = components
-        fields = ['name', 'description', 'left_amount', 'unit_type', 'price_per_unit', 'url', 'status_id']
+        fields = ['name', 'description', 'left_amount', 'unit_type', 'price_per_unit', 'url']
 class ProjectForm(forms.ModelForm):
     # Заменяем поле due_date на версию с HTML5 date input
     due_date = forms.DateField(

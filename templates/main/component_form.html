@@ -54,15 +54,6 @@
                 <div class="text-danger">{{ form.url.errors }}</div>
             {% endif %}
         </div>
-
-        <div class="mb-3">
-            <label for="{{ form.status_id.id_for_label }}" class="form-label">Статус:</label>
-            {{ form.status_id|add_class:"form-control" }}
-            {% if form.status_id.errors %}
-                <div class="text-danger">{{ form.status_id.errors }}</div>
-            {% endif %}
-        </div>
-
         <button type="submit" class="btn btn-success">Сохранить</button>
         <a href="{% url 'components_list' %}" class="btn btn-secondary ms-2">Отмена</a>
     </form>

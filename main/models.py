@@ -51,7 +51,6 @@ class components(models.Model):
     unit_type = models.CharField(max_length=10)
     price_per_unit = models.IntegerField()
     url = models.TextField()
-    status_id = models.IntegerField()
     def __str__(self):
         return self.name
 
