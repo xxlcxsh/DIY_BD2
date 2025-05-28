@@ -25,11 +25,12 @@ def projects_list(request):
 
     # Сперва получаем словарь с подсчитанной себестоимостью для всех проектов пользователя
     # Себестоимость = сумма price_per_unit компонентов, связанных с проектом
+    # Измените расчет себестоимости компонентов, умножая price_per_unit на количество (amount)
     cost_dict = (
         project_components_list.objects
         .filter(project_id__in=user_projects)
         .values('project_id')
-        .annotate(cost_price=Sum('component_id__price_per_unit'))
+        .annotate(cost_price=Sum(F('component_id__price_per_unit') * F('amount')))
         .values_list('project_id', 'cost_price')
     )
     # Превратим в словарь для удобства
