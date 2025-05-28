@@ -47,7 +47,7 @@ def projects_list(request):
             'cost': cost,
             'price': p.price,
             'amount': p.amount,
-            'profit': p.amount * p.price if p.price is not None else 0,
+            'profit': (p.amount * p.price - cost) if p.price is not None else 0,
             'due_date': p.due_date,
             'for_sale': p.for_sale,
         })
